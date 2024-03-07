@@ -1,0 +1,64 @@
+@if (state == 'loaded' || state == 'creating') {
+<form [formGroup]="form">
+  <div>
+    <mat-form-field>
+      <mat-label>Название</mat-label>
+      <input matInput placeholder="название" formControlName="title" />
+    </mat-form-field>
+  </div>
+
+  <div>
+    <mat-form-field>
+      <mat-label>Описание</mat-label>
+      <textarea
+        matInput
+        placeholder="Описание"
+        formControlName="description"
+      ></textarea>
+    </mat-form-field>
+  </div>
+
+  <div>
+    <mat-form-field>
+      <mat-label>Дедлайн</mat-label>
+      <input
+        matInput
+        [matDatepicker]="picker"
+        placeholder="01.01.2000"
+        formControlName="deadline"
+        (click)="picker.open()"
+      />
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <div>
+    <mat-form-field>
+      <mat-label>Приоритет</mat-label>
+      <mat-select matInput title="Приоритет" formControlName="priority">
+        <mat-option value="low">Низкий</mat-option>
+        <mat-option value="medium">Средний</mat-option>
+        <mat-option value="high">Высокий</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div>
+    <mat-form-field>
+      <mat-label>Статус</mat-label>
+      <mat-select matInput title="Статус" formControlName="status">
+        <mat-option value="incomplete">Незавершена</mat-option>
+        <mat-option value="complete">Завершена</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div>
+    <app-performer-input [control]="form.controls.performers"></app-performer-input>
+  </div>
+</form>
+} @else if (state == 'error') {
+<p>Задача не найдена; <a [routerLink]="['/']">к списку задач</a></p>
+} @else if (state == 'loading') {
+<p>Загрузка...</p>
+}

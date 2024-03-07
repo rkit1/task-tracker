@@ -1,0 +1,22 @@
+<mat-form-field>
+  <mat-label>Perfrormers</mat-label>
+  <mat-chip-grid #chipGrid aria-label="Performer selection">
+    @for (perf of perfs | async; track perf) {
+      <mat-chip-row (removed)="remove(perf)">
+        {{perf}}
+        <button matChipRemove [attr.aria-label]="'remove ' + perf">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip-row>
+    }
+  </mat-chip-grid>
+  <input placeholder="New Performer..." #input
+    [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
+    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+    (matChipInputTokenEnd)="add($event)"/>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+    @for (perf of availablePerfs | async; track perf) {
+      <mat-option [value]="perf">{{perf}}</mat-option>
+    }
+  </mat-autocomplete>
+</mat-form-field>
