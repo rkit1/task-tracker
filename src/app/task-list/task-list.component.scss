@@ -2,3 +2,12 @@ a {
   color: black;
   text-decoration: none;
 }
+th, mat-checkbox {
+  -webkit-user-select: none;
+  user-select: none;
+}
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

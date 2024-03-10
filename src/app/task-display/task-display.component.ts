@@ -107,7 +107,6 @@ export class TaskDisplayComponent implements OnDestroy {
         this.form.setValue(tsk);
       }
     });
-    console.log(this.form);
   }
 
 

@@ -61,7 +61,7 @@ export class PerformerInputComponent implements OnInit {
         this.control.setValue([...this.control.value!, event.value]);
       }
       event.chipInput.clear();
-      this.control.markAsTouched();
+      this.control.markAsDirty();
     })
   }
 
@@ -71,7 +71,7 @@ export class PerformerInputComponent implements OnInit {
         this.control.setValue([...this.control.value!, event.option.value])
       }
       this.input.nativeElement.value = '';
-      this.control.markAsTouched();
+      this.control.markAsDirty();
     })
   }
 
@@ -82,6 +82,6 @@ export class PerformerInputComponent implements OnInit {
       arr.splice(index, 1)
       this.control.setValue(arr);
     }
-    this.control.markAsTouched();
+    this.control.markAsDirty();
   }
 }

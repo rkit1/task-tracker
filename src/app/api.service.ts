@@ -71,6 +71,7 @@ export class ApiService {
       return O.of(structuredClone(task) as Task);
     }
   }
+
   fetch_task(id: number): O.Observable<Task | undefined> {
     return O.of(
       structuredClone(this.tasks.find(x => x.id == id))
