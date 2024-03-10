@@ -13,6 +13,7 @@ import * as O from 'rxjs';
 import * as Op from 'rxjs/operators';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { FilterStateService } from '../filter-state.service';
 
 function changes_initial(fc: FormControl) {
   return fc.valueChanges.pipe(Op.startWith(fc.value));
@@ -29,22 +30,20 @@ function changes_initial(fc: FormControl) {
 export class TaskListComponent implements OnInit {
   private api = inject(ApiService);
   private router = inject(Router);
+  public filter_state = inject(FilterStateService);
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
   dataSource = new MatTableDataSource<Task>();
   displayedColumns: string[] = ['title', 'deadline', 'status', 'priority', 'performers'];
   dead = new O.Subject<void>();
 
   available_performers = this.api.list_performers();
-  filter_performer = new FormControl('');
-  filter_title = new FormControl('');
-  filter_incomplete = new FormControl(false);
-
+  
   ngOnInit() {
     O.combineLatest([
       this.api.list_tasks(),
-      changes_initial(this.filter_performer),
-      changes_initial(this.filter_title),
-      changes_initial(this.filter_incomplete),
+      changes_initial(this.filter_state.performer),
+      changes_initial(this.filter_state.title),
+      changes_initial(this.filter_state.incomplete),
     ])
       .pipe(Op.takeUntil(this.dead))
       .subscribe(([tasks, fp, ft, fi]) => {

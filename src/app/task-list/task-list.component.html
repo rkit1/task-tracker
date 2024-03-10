@@ -1,19 +1,19 @@
 <div class="top-row">
-  <a href="/task-new" mat-raised-button color="primary">Новая задача</a>
+  <a routerLink="/task-new" mat-raised-button color="primary">Новая задача</a>
   <mat-form-field subscriptSizing="dynamic">
     <mat-label>Название</mat-label>
-    <input matInput placeholder="Название" [formControl]="filter_title"/>
+    <input matInput placeholder="Название" [formControl]="filter_state.title"/>
   </mat-form-field>
   <mat-form-field subscriptSizing="dynamic">
     <mat-label>Исполнитель</mat-label>
-    <input matInput placeholder="Исполнитель" [formControl]="filter_performer" [matAutocomplete]="performers"/>
+    <input matInput placeholder="Исполнитель" [formControl]="filter_state.performer" [matAutocomplete]="performers"/>
     <mat-autocomplete #performers="matAutocomplete">
       @for (perf of available_performers | async; track perf) {
         <mat-option [value]="perf">{{perf}}</mat-option>
       }
     </mat-autocomplete>
   </mat-form-field>
-  <mat-checkbox [formControl]="filter_incomplete">Только незавершенные задачи</mat-checkbox>
+  <mat-checkbox [formControl]="filter_state.incomplete">Только незавершенные задачи</mat-checkbox>
 </div>
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
   <ng-container matColumnDef="title">
