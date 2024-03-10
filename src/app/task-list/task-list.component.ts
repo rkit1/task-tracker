@@ -72,4 +72,15 @@ export class TaskListComponent implements OnInit {
   row_click(t: Task) {
     this.router.navigate(['task', t.id]);
   }
+
+  translate(string: Task['priority'] | Task['status']) {
+    switch (string) {
+      case 'low': return 'Низкий';
+      case 'medium': return 'Средний';
+      case 'high': return 'Высокий';
+      case 'complete': return 'Завершена';
+      case 'incomplete': return 'Незавершена';
+      default: return string;
+    }
+  }
 }
