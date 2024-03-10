@@ -23,11 +23,14 @@ export class PerformerInputComponent implements OnInit {
   private api = inject(ApiService);
   @Input() control!: FormControl<string[] | null>;
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
+  @ViewChild('chipGrid') chipGrid: any;
 
   separatorKeysCodes: number[] = [ENTER, COMMA];
 
   perfs: O.Observable<string[] | null> = O.of([]);
   availablePerfs: O.Observable<string[]> = O.of([]);
+
+  dead = new O.Subject<void>();
 
   ngOnInit(): void {
     this.perfs = this.control.valueChanges.pipe(
@@ -40,21 +43,35 @@ export class PerformerInputComponent implements OnInit {
         Op.map(([perfs, aperfs]) => aperfs.filter(x => !perfs!.includes(x))),
         Op.shareReplay(1),
       );
+
+    this.control.statusChanges.pipe(Op.takeUntil(this.dead)).subscribe(x => {
+      this.chipGrid.errorState = x == 'INVALID';
+    });
+  }
+  ngOnDestroy(): void {
+    this.dead.next();
+    this.dead.complete();
   }
 
 
   add(event: MatChipInputEvent) {
-    if (!this.control.value!.includes(event.value)) {
-      this.control.setValue([...this.control.value!, event.value])
-    }
-    event.chipInput.clear();
+    this.availablePerfs.pipe(Op.take(1)).subscribe(ps => {
+      if (ps.includes(event.value)) {
+        this.control.setValue([...this.control.value!, event.value]);
+      }
+      event.chipInput.clear();
+      this.control.markAsTouched();
+    })
   }
 
   selected(event: MatAutocompleteSelectedEvent) {
-    if (!this.control.value!.includes(event.option.value)) {
-      this.control.setValue([...this.control.value!, event.option.value])
-    }
-    this.input.nativeElement.value = '';
+    this.availablePerfs.pipe(Op.take(1)).subscribe(ps => {
+      if (ps.includes(event.option.value)) {
+        this.control.setValue([...this.control.value!, event.option.value])
+      }
+      this.input.nativeElement.value = '';
+      this.control.markAsTouched();
+    })
   }
 
   remove(perf: string) {
@@ -64,5 +81,6 @@ export class PerformerInputComponent implements OnInit {
       arr.splice(index, 1)
       this.control.setValue(arr);
     }
+    this.control.markAsTouched();
   }
 }

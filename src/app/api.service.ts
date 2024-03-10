@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import * as O from 'rxjs';
 import * as Op from 'rxjs/operators';
 
+
+type Optional<T, K extends keyof T> =
+  Omit<T, K> & { [P in K]?: T[P] };
+
 export interface Task {
   id: number,
   title: string,
@@ -50,7 +54,24 @@ export class ApiService {
   }
 
   //create_task()
-  //edit_task()
+  edit_task(task: Optional<Task, 'id'>) {
+    if (task.id != undefined) {
+      const to_edit = this.tasks.find(t => t.id == task.id);
+      if (!to_edit) {
+        return O.throwError(() => {
+          return new Error(`task not found`);
+        });
+      }
+      Object.assign(to_edit, task);
+      localStorage.setItem('tasks', JSON.stringify(this.tasks));
+      return O.of(to_edit);
+    } else {
+      task.id = Date.now();
+      this.tasks.push(task as Task);
+      localStorage.setItem('tasks', JSON.stringify(this.tasks));
+      return structuredClone(task);
+    }
+  }
   fetch_task(id: number): O.Observable<Task | undefined> {
     return O.of(
       structuredClone(this.tasks.find(x => x.id == id))

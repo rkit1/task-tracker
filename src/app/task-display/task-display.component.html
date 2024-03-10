@@ -1,9 +1,12 @@
 @if (state == 'loaded' || state == 'creating') {
-<form [formGroup]="form">
+<form [formGroup]="form" (submit)="submit()">
   <div>
     <mat-form-field>
       <mat-label>Название</mat-label>
       <input matInput placeholder="название" formControlName="title" />
+      @if (form.controls.title.invalid) {
+      <mat-error>Минимум 4 символа</mat-error>
+      }
     </mat-form-field>
   </div>
 
@@ -14,7 +17,11 @@
         matInput
         placeholder="Описание"
         formControlName="description"
+        rows="5"
       ></textarea>
+      @if (form.controls.description.invalid) {
+      <mat-error>Минимум 4 символа</mat-error>
+      }
     </mat-form-field>
   </div>
 
@@ -29,6 +36,9 @@
         (click)="picker.open()"
       />
       <mat-datepicker #picker></mat-datepicker>
+      @if (form.controls.deadline.invalid) {
+      <mat-error>Дата должна быть в будущем</mat-error>
+      }
     </mat-form-field>
   </div>
 
@@ -54,7 +64,20 @@
   </div>
 
   <div>
-    <app-performer-input [control]="form.controls.performers"></app-performer-input>
+    <app-performer-input
+      [control]="form.controls.performers"
+    ></app-performer-input>
+  </div>
+
+  <div>
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="form.invalid || form.pristine"
+    >
+      Сохранить
+    </button>
   </div>
 </form>
 } @else if (state == 'error') {

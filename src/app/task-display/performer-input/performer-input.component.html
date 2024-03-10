@@ -1,5 +1,5 @@
 <mat-form-field>
-  <mat-label>Perfrormers</mat-label>
+  <mat-label>Исполнители</mat-label>
   <mat-chip-grid #chipGrid aria-label="Performer selection">
     @for (perf of perfs | async; track perf) {
       <mat-chip-row (removed)="remove(perf)">
@@ -14,6 +14,8 @@
     [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
     (matChipInputTokenEnd)="add($event)"/>
+  <mat-error>Введите минимум одного исполнителя</mat-error>
+
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
     @for (perf of availablePerfs | async; track perf) {
       <mat-option [value]="perf">{{perf}}</mat-option>
