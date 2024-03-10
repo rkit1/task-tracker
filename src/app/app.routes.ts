@@ -1,11 +1,9 @@
 import { Routes } from '@angular/router';
-import { TaskListComponent } from './task-list/task-list.component';
-import { TaskDisplayComponent } from './task-display/task-display.component';
 
 export const routes: Routes = [
-  { path: '', component: TaskListComponent },
-  { path: 'task-new', component: TaskDisplayComponent },
-  { path: 'task/:id', component: TaskDisplayComponent },
+  { path: '', loadComponent: () => import('./task-list/task-list.component').then(mod => mod.TaskListComponent) },
+  { path: 'task-new', loadComponent: () => import('./task-display/task-display.component').then(mod => mod.TaskDisplayComponent) },
+  { path: 'task/:id', loadComponent: () => import('./task-display/task-display.component').then(mod => mod.TaskDisplayComponent) },
   //{ path: '',   redirectTo: '/', pathMatch: 'full' },
   { path: '**', redirectTo: '/' },
 ];
