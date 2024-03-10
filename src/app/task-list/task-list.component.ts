@@ -3,11 +3,13 @@ import { ApiService, Task } from '../api.service';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { Router, RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, MatTableModule, RouterModule],
+  imports: [CommonModule, MatTableModule, RouterModule, MatButtonModule, MatIconModule],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
 })

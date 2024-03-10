@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, inject } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import * as O from 'rxjs';
 import * as Op from 'rxjs/operators';
 import { ApiService, Task } from '../api.service';
@@ -11,8 +11,15 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { PerformerInputComponent } from './performer-input/performer-input.component';
 import { Validators } from '@angular/forms';
-import {MatButtonModule} from '@angular/material/button'; 
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
+
+function make_deadline(): Date {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d;
+}
 
 @Component({
   selector: 'app-task-display',
@@ -27,15 +34,17 @@ import {MatButtonModule} from '@angular/material/button';
 export class TaskDisplayComponent implements OnDestroy {
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);
+  private snackbar = inject(MatSnackBar);
+  private router = inject(Router);
   dead = new O.Subject<void>();
 
   state: 'creating' | 'loading' | 'loaded' | 'error' = 'creating';
 
   form = new FormGroup({
-    id: new FormControl<Task['id'] | undefined>(undefined, Validators.required),
+    id: new FormControl<Task['id'] | undefined>(undefined),
     title: new FormControl<Task['title']>('', Validators.minLength(4)),
     description: new FormControl<Task['description']>('', Validators.minLength(4)),
-    deadline: new FormControl<Task['deadline']>(new Date(), (ctl: AbstractControl) => {
+    deadline: new FormControl<Task['deadline']>(make_deadline(), /*(ctl: AbstractControl) => {
       const d = ctl.value as Date;
       if (d < new Date()) {
         return {
@@ -43,7 +52,7 @@ export class TaskDisplayComponent implements OnDestroy {
         };
       }
       return null;
-    }),
+    }*/),
     priority: new FormControl<Task['priority']>('low'),
     status: new FormControl<Task['status']>('incomplete'),
     performers: new FormControl<Task['performers']>([], (ctl: AbstractControl) => {
@@ -57,14 +66,30 @@ export class TaskDisplayComponent implements OnDestroy {
   });
 
   submit() {
-    this.api.edit_task(this.form.getRawValue() as any);
-    console.log(this.form.getRawValue());
+    this.api.edit_task(this.form.getRawValue() as any).subscribe({
+      next: (value: Task) => {
+        this.snackbar.open('Сохранено', 'ok', {
+          duration: 3000
+        });
+        this.router.navigate(['/']);
+      },
+      error: () => {
+        this.snackbar.open('Ошибка', 'ok');
+        this.router.navigate(['/']);
+      }
+    });
   }
 
   constructor() {
     this.route.params.pipe(Op.takeUntil(this.dead), Op.switchMap((p) => {
-      this.state = 'loading';
-      return this.api.fetch_task(p['id']);
+      if (p['id'] !== undefined) {
+        this.state = 'loading';
+        return this.api.fetch_task(p['id']);
+      }
+      else {
+        this.state = 'creating';
+        return O.NEVER;
+      }
     })).subscribe(tsk => {
       if (tsk == undefined) {
         this.state = 'error';
@@ -73,6 +98,7 @@ export class TaskDisplayComponent implements OnDestroy {
         this.form.setValue(tsk);
       }
     });
+    console.log(this.form);
   }
 
 

@@ -53,8 +53,7 @@ export class ApiService {
     }
   }
 
-  //create_task()
-  edit_task(task: Optional<Task, 'id'>) {
+  edit_task(task: Optional<Task, 'id'>): O.Observable<Task> {
     if (task.id != undefined) {
       const to_edit = this.tasks.find(t => t.id == task.id);
       if (!to_edit) {
@@ -69,7 +68,7 @@ export class ApiService {
       task.id = Date.now();
       this.tasks.push(task as Task);
       localStorage.setItem('tasks', JSON.stringify(this.tasks));
-      return structuredClone(task);
+      return O.of(structuredClone(task) as Task);
     }
   }
   fetch_task(id: number): O.Observable<Task | undefined> {
