@@ -48,6 +48,7 @@ export class PerformerInputComponent implements OnInit {
       this.chipGrid.errorState = x == 'INVALID';
     });
   }
+  
   ngOnDestroy(): void {
     this.dead.next();
     this.dead.complete();

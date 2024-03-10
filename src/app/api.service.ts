@@ -77,6 +77,12 @@ export class ApiService {
     );
   }
 
+  delete_task(id: number): O.Observable<null> {
+    this.tasks = this.tasks.filter(t => t.id !== id);
+    localStorage.setItem('tasks', JSON.stringify(this.tasks));
+    return O.of(null);
+  }
+
   list_tasks(): O.Observable<Task[]> {
     return O.of(structuredClone(this.tasks));
   }

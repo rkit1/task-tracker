@@ -80,6 +80,15 @@ export class TaskDisplayComponent implements OnDestroy {
     });
   }
 
+  delete_task() {
+    this.api.delete_task(this.form.controls.id.value!).subscribe(x => {
+      this.snackbar.open('Задача удалена', 'ok', {
+        duration: 3000
+      });
+      this.router.navigate(['/']);
+    });
+  }
+
   constructor() {
     this.route.params.pipe(Op.takeUntil(this.dead), Op.switchMap((p) => {
       if (p['id'] !== undefined) {

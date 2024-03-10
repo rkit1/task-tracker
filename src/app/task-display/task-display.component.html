@@ -70,7 +70,16 @@
     ></app-performer-input>
   </div>
 
-  <div>
+  <div class="button-row">
+    <button
+      mat-raised-button
+      color="warn"
+      type="button"
+      [disabled]="form.controls.id.value == undefined"
+      (click)="delete_task()"
+    >
+      Удалить задачу
+    </button>
     <button
       mat-raised-button
       color="primary"
